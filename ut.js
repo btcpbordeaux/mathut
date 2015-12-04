@@ -197,9 +197,10 @@
 //http://stackoverflow.com/questions/1960473/unique-values-in-an-array
 //originally by user Raphael
 //I just made it slightly more general
-Array.prototype.uniqueMembers = function () {
+Array.prototype.uniqueMembers = function (checkSortedArrays) {
                 var tmp = {},
                     ret = [];
+                if (checkSortedArrays == undefined) {checkSortedArrays = false;}
                 for (var i = 0; i < this.length; i++) {
                     switch (typeof this[i]) {
                         case 'string':
@@ -248,30 +249,47 @@ Array.prototype.uniqueMembers = function () {
                                     break;
                                 //keys of object this[i] are numbers => case this[i] is array
                                 case 'number':
-                                    //this only will match arrays with
-                                    //same entry in the same position
-                                    //[3,1,2] != [1,2,3]
-                                    for (var n = 0; n < this[i].length; n++) {
-                                        switch (typeof this[i][n]) {
-                                            case 'number':
-                                                if (this[i][n] < 0) {
-                                                    var pos = -1; 
-                                                        pos *= this[i][n];
-                                                        keyString += "p"+n+"_"+"n"+pos+"_";
-                                                } else if (this[i][n] >= 0) {
-                                                    keyString += "p"+n+"_"+this[i][n]+"_";
-                                                }
+                                    if (checkSortedArrays == false) {
+                                        //this only will match arrays with
+                                        //same entry in the same position
+                                        //[3,1,2] != [1,2,3]
+                                        this[i] = this[i];
+                                        } else if (checkSortedArrays == true) {
+                                        //this will sort the arrays
+                                        //assuming this[i] = varchar[] or int[] or char[] or whatever[]
+                                        //but not [[]] or [{}]
+                                        this[i] = this[i].sort();
+                                        //ya, this function won't sort
+                                        //numbers correctly because, for example,
+                                        //in unicode, the point order of 10 is greater
+                                        //than 2 so [2,10,1].sort() == [1,10,2]
+                                        //but we don't care about that
+                                        //just a consistent means of sorting
+                                        }
+                                        for (var n = 0; n < this[i].length; n++) {
+                                            switch (typeof this[i][n]) {
+                                                case 'number':
+                                                    if (this[i][n] < 0) {
+                                                        var pos = -1; 
+                                                            pos *= this[i][n];
+                                                            keyString += "p"+n+"_"+"n"+pos+"_";
+                                                    } else if (this[i][n] >= 0) {
+                                                        keyString += "p"+n+"_"+this[i][n]+"_";
+                                                    }
                                                     break;
-                                            case 'string':
-                                                keyString += "p"+n+"_"+this[i][keys[n]]+"_";
-                                                break;
+                                                case 'string':
+                                                    keyString += "p"+n+"_"+this[i][keys[n]]+"_";
+                                                    break;
+                                            };
                                         };
-                                    }
+                                     
                                     if (tmp.hasOwnProperty(keyString)) {
                                         continue;
                                     }
+                                    
                                     ret.push(this[i]);
                                     tmp[keyString] = "ayyy lmao";
+                                    
                                     break;
                             };
                             break;
