@@ -192,3 +192,90 @@
       if (current_deter*deter < 0) {return true}
         else {return false}
       }
+
+//base off a SO post I saw
+//http://stackoverflow.com/questions/1960473/unique-values-in-an-array
+//originally by user Raphael
+//I just made it slightly more general
+Array.prototype.uniqueMembers = function () {
+                var tmp = {},
+                    ret = [];
+                for (var i = 0; i < this.length; i++) {
+                    switch (typeof this[i]) {
+                        case 'string':
+                            if (tmp.hasOwnProperty(this[i])) {
+                                    continue;
+                                }  
+                                ret.push(this[i]);
+                                tmp[this[i]] = 'ayyy lmao'
+                            break;
+                        case 'number':
+                            if (tmp.hasOwnProperty(this[i])) {
+                                    continue;
+                                }  
+                                ret.push(this[i]);
+                                tmp[this[i]] = 'ayyy lmao';
+                                 
+                            break;
+                        case 'object':
+                                var keys = Object.keys(this[i]),
+                                    keyString = "";
+                            //object vs array
+                            switch (typeof keys[0]) {
+                                //keys of object this[i] are strings => case this[i] is 'object'
+                                case 'string':
+                                    for (var n = 0; n < keys.length; n++) {
+                                        switch (typeof this[i][keys[n]]) {
+                                            case 'number':
+                                                if (this[i][keys[n]] < 0) {
+                                                    var pos = -1; 
+                                                        pos *= this[i][keys[n]];
+                                                        keyString += keys[n]+"_"+"n"+pos+"_";
+                                                } else if (this[i][keys[n]] >= 0) {
+                                                    keyString += keys[n]+"_"+this[i][keys[n]]+"_";
+                                                }
+                                                    break;
+                                            case 'string':
+                                                keyString += keys[n]+"_"+this[i][keys[n]]+"_";
+                                                break;
+                                        };
+                                    }
+                                    if (tmp.hasOwnProperty(keyString)) {
+                                        continue;
+                                    }
+                                    ret.push(this[i]);
+                                    tmp[keyString] = "ayyy lmao";
+                                    break;
+                                //keys of object this[i] are numbers => case this[i] is array
+                                case 'number':
+                                    //this only will match arrays with
+                                    //same entry in the same position
+                                    //[3,1,2] != [1,2,3]
+                                    for (var n = 0; n < this[i].length; n++) {
+                                        switch (typeof this[i][n]) {
+                                            case 'number':
+                                                if (this[i][n] < 0) {
+                                                    var pos = -1; 
+                                                        pos *= this[i][n];
+                                                        keyString += "p"+n+"_"+"n"+pos+"_";
+                                                } else if (this[i][n] >= 0) {
+                                                    keyString += "p"+n+"_"+this[i][n]+"_";
+                                                }
+                                                    break;
+                                            case 'string':
+                                                keyString += "p"+n+"_"+this[i][keys[n]]+"_";
+                                                break;
+                                        };
+                                    }
+                                    if (tmp.hasOwnProperty(keyString)) {
+                                        continue;
+                                    }
+                                    ret.push(this[i]);
+                                    tmp[keyString] = "ayyy lmao";
+                                    break;
+                            };
+                            break;
+                    }
+                }
+                return ret;
+        }
