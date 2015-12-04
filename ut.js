@@ -39,7 +39,8 @@
       };
 
       
-
+//NOT MINE, FROM MATRIX.JS//////////////////////////////////////////////////////////////////
+   //think its peter coxhead (that name tho)
       function _foreach2(x, s, k, f) {
         if (k === s.length - 1) return f(x);
         var i, n = s[k], ret = Array(n);
@@ -159,7 +160,7 @@
 
         return x;
       }
-
+//END STUFF FROM MATRIX.JS/////////////////////////////////////////////////////////////////////////////
       ut.solve = function(A, b, fast) {
       return LUsolve(LU(A, fast), b);
       };
@@ -197,7 +198,7 @@
 //http://stackoverflow.com/questions/1960473/unique-values-in-an-array
 //originally by user Raphael
 //I just made it slightly more general
-Array.prototype.uniqueMembers = function (checkSortedArrays) {
+ Array.prototype.uniqueMembers = function (checkSortedArrays) {
                 var tmp = {},
                     ret = [];
                 if (checkSortedArrays == undefined) {checkSortedArrays = false;}
@@ -221,10 +222,13 @@ Array.prototype.uniqueMembers = function (checkSortedArrays) {
                         case 'object':
                                 var keys = Object.keys(this[i]),
                                     keyString = "";
-                            //object vs array
-                            switch (typeof keys[0]) {
+                            //figure out if typeof this[i] == 'object'
+                            //is referring to {} or []
+                            //by checking if the keys can be cast 
+                            //to numbers by Number()
+                            switch (isNaN(Number(keys[0]))) {
                                 //keys of object this[i] are strings => case this[i] is 'object'
-                                case 'string':
+                                case true:
                                     for (var n = 0; n < keys.length; n++) {
                                         switch (typeof this[i][keys[n]]) {
                                             case 'number':
@@ -248,13 +252,15 @@ Array.prototype.uniqueMembers = function (checkSortedArrays) {
                                     tmp[keyString] = "ayyy lmao";
                                     break;
                                 //keys of object this[i] are numbers => case this[i] is array
-                                case 'number':
+                                case false:
                                     if (checkSortedArrays == false) {
+                                        console.log("checkSortedArrays == false");
                                         //this only will match arrays with
                                         //same entry in the same position
                                         //[3,1,2] != [1,2,3]
                                         this[i] = this[i];
                                         } else if (checkSortedArrays == true) {
+                                        console.log("checkSortedArrays == true")
                                         //this will sort the arrays
                                         //assuming this[i] = varchar[] or int[] or char[] or whatever[]
                                         //but not [[]] or [{}]
@@ -282,7 +288,7 @@ Array.prototype.uniqueMembers = function (checkSortedArrays) {
                                                     break;
                                             };
                                         };
-                                     
+                                     //console.log(keyString);
                                     if (tmp.hasOwnProperty(keyString)) {
                                         continue;
                                     }
